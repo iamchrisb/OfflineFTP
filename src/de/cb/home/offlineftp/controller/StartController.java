@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import de.cb.home.offlineftp.common.FileUtils;
 import de.cb.home.offlineftp.view.StartView;
 
 public class StartController implements StartView.Presenter {
@@ -23,13 +24,15 @@ public class StartController implements StartView.Presenter {
 
 	@Override
 	public void setLeftDirectory(String leftDirectoryPath) {
-		view.setLeftTreeRootItem(getRootItem(leftDirectoryPath));
+		File f = new File(leftDirectoryPath);
+		view.setLeftBarProgress(FileUtils.getUsedSpaceAsPercent(f));
+		view.setLeftBarUsableGB(FileUtils.getUsableSpaceAsGB(f));
+		view.setLeftTreeRootItem(getRootItem(f));
 
 	}
 
-	private TreeItem<String> getRootItem(final String path) {
-		File f = new File(path);
-		return findRoot(f);
+	private TreeItem<String> getRootItem(final File rootFile) {
+		return findRoot(rootFile);
 	}
 
 	private TreeItem<String> findRoot(File file) {
@@ -63,7 +66,8 @@ public class StartController implements StartView.Presenter {
 
 	@Override
 	public void setRightDirectory(String rightDirectoryPath) {
-		view.setRightTreeRootItem(getRootItem(rightDirectoryPath));
+		File f = new File(rightDirectoryPath);
+		view.setRightTreeRootItem(getRootItem(f));
 	}
 
 	@Override

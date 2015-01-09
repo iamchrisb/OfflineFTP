@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -15,6 +16,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import de.cb.home.offlineftp.common.FileUtils;
 import de.cb.home.offlineftp.common.Messages;
 
 public class StartViewImpl implements StartView {
@@ -25,11 +27,15 @@ public class StartViewImpl implements StartView {
 	private ProgressBar leftBar;
 	private ProgressBar rightBar;
 	private Stage stage;
+	private Label leftbarLabel;
 
 	public StartViewImpl(Stage stage) {
 		this.stage = stage;
 		VBox verticalContainer = new VBox(10);
 		HBox horizontalContainer = new HBox(10);
+		VBox leftContainer = new VBox(10);
+		VBox rightContainer = new VBox(10);
+
 		Scene scene = new Scene(verticalContainer, 750, 500, Color.web("#666970"));
 		stage.setScene(scene);
 		stage.setTitle(Messages.APPLICATION_TITLE);
@@ -40,9 +46,7 @@ public class StartViewImpl implements StartView {
 		rightTree = new TreeView<String>(rootItem);
 		leftTree = new TreeView<String>(rootItem);
 
-		horizontalContainer.getChildren().add(leftTree);
-		horizontalContainer.getChildren().add(rightTree);
-
+		horizontalContainer.getChildren().addAll(leftContainer, rightContainer);
 		verticalContainer.getChildren().add(horizontalContainer);
 
 		Button leftDirBtn = new Button("leftdir");
@@ -55,7 +59,6 @@ public class StartViewImpl implements StartView {
 				}
 			}
 		});
-		verticalContainer.getChildren().add(leftDirBtn);
 
 		Button rightDirBtn = new Button("rightdir");
 		rightDirBtn.setOnAction(new EventHandler<ActionEvent>() {
@@ -68,10 +71,17 @@ public class StartViewImpl implements StartView {
 			}
 		});
 
-		verticalContainer.getChildren().add(rightDirBtn);
+		HBox leftBarContainer = new HBox(10);
+		leftBar = new ProgressBar(100);
+		leftBar.setProgress(0);
+		leftbarLabel = new Label("-/- GB free");
+		leftBarContainer.getChildren().addAll(leftBar, leftbarLabel);
 
-		leftBar = new ProgressBar();
-		rightBar = new ProgressBar();
+		rightBar = new ProgressBar(100);
+		rightBar.setProgress(0);
+
+		leftContainer.getChildren().addAll(leftDirBtn, leftBarContainer, leftTree);
+		rightContainer.getChildren().addAll(rightDirBtn, rightBar, rightTree);
 	}
 
 	@Override
@@ -97,6 +107,36 @@ public class StartViewImpl implements StartView {
 			public void run() {
 				root.setExpanded(true);
 				rightTree.setRoot(root);
+			}
+		});
+	}
+
+	@Override
+	public void setRightBar(final double progress) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				rightBar.setProgress(progress);
+			}
+		});
+	}
+
+	@Override
+	public void setLeftBarProgress(final double progress) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				leftBar.setProgress(progress);
+			}
+		});
+	}
+
+	@Override
+	public void setLeftBarUsableGB(final double gb) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				leftbarLabel.setText(FileUtils.gbFormat.format(gb) + "GB free");
 			}
 		});
 	}

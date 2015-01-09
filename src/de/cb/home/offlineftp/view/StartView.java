@@ -5,15 +5,17 @@ import java.util.List;
 
 import javafx.scene.control.TreeItem;
 
-
 public interface StartView {
-	
+
 	void setPresenter(Presenter presenter);
-	
+
 	interface Presenter {
 		void onUpload(List<File> files);
+
 		void onDownload(List<File> files);
+
 		void setRightDirectory(String rightDirectoryPath);
+
 		void setLeftDirectory(String leftDirectoryPath);
 	}
 
@@ -21,5 +23,10 @@ public interface StartView {
 
 	void setRightTreeRootItem(TreeItem<String> root);
 
-	
+	void setRightBar(double progress);
+
+	void setLeftBarProgress(double progress);
+
+	void setLeftBarUsableGB(double gb);
+
 }
