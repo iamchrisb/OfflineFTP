@@ -25,9 +25,12 @@ public class StartViewImpl implements StartView {
 	private TreeView<String> rightTree;
 	private TreeView<String> leftTree;
 	private ProgressBar leftBar;
+	private ProgressBar leftbarProgressIndicator;
 	private ProgressBar rightBar;
+	private ProgressBar rightbarProgressIndicator;
 	private Stage stage;
 	private Label leftbarLabel;
+	private HBox leftbarProgressIndicatorContainer;
 
 	public StartViewImpl(Stage stage) {
 		this.stage = stage;
@@ -55,6 +58,7 @@ public class StartViewImpl implements StartView {
 			public void handle(ActionEvent arg0) {
 				File pickedFile = new DirectoryChooser().showDialog(StartViewImpl.this.stage);
 				if (pickedFile != null) {
+					leftbarProgressIndicatorContainer.setVisible(true);
 					presenter.setLeftDirectory(pickedFile.getAbsolutePath());
 				}
 			}
@@ -76,11 +80,16 @@ public class StartViewImpl implements StartView {
 		leftBar.setProgress(0);
 		leftbarLabel = new Label("-/- GB free");
 		leftBarContainer.getChildren().addAll(leftBar, leftbarLabel);
+		leftbarProgressIndicatorContainer = new HBox(10);
+		leftbarProgressIndicator = new ProgressBar();
+		Label leftbarProgressIndicatorLabel = new Label("scanning...");
+		leftbarProgressIndicatorContainer.getChildren().addAll(leftbarProgressIndicator, leftbarProgressIndicatorLabel);
+		leftbarProgressIndicatorContainer.setVisible(false);
+
+		leftContainer.getChildren().addAll(leftDirBtn, leftBarContainer, leftTree, leftbarProgressIndicatorContainer);
 
 		rightBar = new ProgressBar(100);
 		rightBar.setProgress(0);
-
-		leftContainer.getChildren().addAll(leftDirBtn, leftBarContainer, leftTree);
 		rightContainer.getChildren().addAll(rightDirBtn, rightBar, rightTree);
 	}
 
@@ -95,6 +104,7 @@ public class StartViewImpl implements StartView {
 			@Override
 			public void run() {
 				root.setExpanded(true);
+				leftbarProgressIndicatorContainer.setVisible(false);
 				leftTree.setRoot(root);
 			}
 		});

@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
 
+import javax.swing.Icon;
+import javax.swing.filechooser.FileSystemView;
+
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
@@ -20,19 +23,23 @@ public class StartController implements StartView.Presenter {
 	public StartController(StartView view) {
 		this.view = view;
 		view.setPresenter(this);
+		FileSystemView system = FileSystemView.getFileSystemView();
 	}
 
 	@Override
 	public void setLeftDirectory(String leftDirectoryPath) {
-		File f = new File(leftDirectoryPath);
+		final File f = new File(leftDirectoryPath);
+		FileSystemView system = FileSystemView.getFileSystemView();
+		Icon systemIcon = system.getSystemIcon(f);
 		view.setLeftBarProgress(FileUtils.getUsedSpaceAsPercent(f));
 		view.setLeftBarUsableGB(FileUtils.getUsableSpaceAsGB(f));
-		view.setLeftTreeRootItem(getRootItem(f));
+		new Thread() {
+			@Override
+			public void run() {
+				view.setLeftTreeRootItem(findRoot(f));
+			};
+		}.start();
 
-	}
-
-	private TreeItem<String> getRootItem(final File rootFile) {
-		return findRoot(rootFile);
 	}
 
 	private TreeItem<String> findRoot(File file) {
@@ -67,7 +74,7 @@ public class StartController implements StartView.Presenter {
 	@Override
 	public void setRightDirectory(String rightDirectoryPath) {
 		File f = new File(rightDirectoryPath);
-		view.setRightTreeRootItem(getRootItem(f));
+		view.setRightTreeRootItem(findRoot(f));
 	}
 
 	@Override

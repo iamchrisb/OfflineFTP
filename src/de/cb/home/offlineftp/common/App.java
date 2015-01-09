@@ -12,6 +12,10 @@ import de.cb.home.offlineftp.view.StartView;
 import de.cb.home.offlineftp.view.StartViewImpl;
 
 public class App extends Application {
+	
+	public static void main(String[] args) {
+		launch(args);
+	}
 	@Override
 	public void start(Stage stage) throws Exception {
 		StartView startView = new StartViewImpl(stage);
@@ -19,12 +23,5 @@ public class App extends Application {
 		StartController startController = new StartController(startView);
 		FileSystemView system = FileSystemView.getFileSystemView();
 		File[] roots = system.getRoots();
-		for (File file : roots) {
-			System.out.println(file.getAbsolutePath());
-			System.out.println(file.getTotalSpace());
-			System.out.println(file.getUsableSpace());
-			System.out.println(file.getFreeSpace());
-		}
-
 	}
 }
