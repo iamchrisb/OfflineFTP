@@ -17,8 +17,10 @@ import de.cb.home.offlineftp.view.StartView;
 public class StartController implements StartView.Presenter {
 
 	private static final String FOLDER_SMALL_16_PNG = "folder_small_16.png";
+	private static final String HARDDRIVE_SMALL_16_PNG = "harddrive_small_16.png";
 	private StartView view;
 	private Image folderIconImage = new Image(getClass().getResourceAsStream(FOLDER_SMALL_16_PNG));
+	private Image harddriveIconImage = new Image(getClass().getResourceAsStream(HARDDRIVE_SMALL_16_PNG));
 
 	public StartController(StartView view) {
 		this.view = view;
@@ -46,7 +48,11 @@ public class StartController implements StartView.Presenter {
 		if (file.isFile()) {
 			return new TreeItem<String>(file.getName());
 		} else {
+			boolean isAbs = file.isAbsolute();
 			Node dirIcon = new ImageView(folderIconImage);
+			if(isAbs) {
+				dirIcon = new ImageView(harddriveIconImage);
+			}
 			TreeItem<String> currentParent = new TreeItem<String>(file.getName(), dirIcon);
 			for (File currentChild : file.listFiles()) {
 				findItems(currentChild, currentParent);

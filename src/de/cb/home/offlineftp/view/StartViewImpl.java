@@ -65,15 +65,7 @@ public class StartViewImpl implements StartView {
 		});
 
 		Button rightDirBtn = new Button("rightdir");
-		rightDirBtn.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent arg0) {
-				File pickedFile = new DirectoryChooser().showDialog(StartViewImpl.this.stage);
-				if (pickedFile != null) {
-					presenter.setRightDirectory(pickedFile.getAbsolutePath());
-				}
-			}
-		});
+		rightDirBtn.setOnAction(e -> onRightAction());
 
 		HBox leftBarContainer = new HBox(10);
 		leftBar = new ProgressBar(100);
@@ -91,6 +83,13 @@ public class StartViewImpl implements StartView {
 		rightBar = new ProgressBar(100);
 		rightBar.setProgress(0);
 		rightContainer.getChildren().addAll(rightDirBtn, rightBar, rightTree);
+	}
+
+	private void onRightAction() {
+		File pickedFile = new DirectoryChooser().showDialog(StartViewImpl.this.stage);
+		if (pickedFile != null) {
+			presenter.setRightDirectory(pickedFile.getAbsolutePath());
+		}
 	}
 
 	@Override
